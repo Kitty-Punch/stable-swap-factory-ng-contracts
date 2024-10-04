@@ -1,0 +1,14 @@
+{
+  "name": "@kitty-punch/stable-swap-factory-ng-contracts",
+  "version": "0.1.0",
+  "license": "MIT",
+  "devDependencies": {
+    
+  },
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test -vvv",
+    "coverage": "forge coverage --report summary --report lcov",
+    "lint:sol": "prettier --write 'src/**/*.sol' 'test/**/*.sol'"
+  }
+}
