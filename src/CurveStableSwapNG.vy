@@ -1,5 +1,5 @@
 # pragma version 0.3.10
-# pr agma opt imize co desize
+# pr agma opt imize codesize
 # pragma evm-version cancun
 """
 @title CurveStableSwapNG
