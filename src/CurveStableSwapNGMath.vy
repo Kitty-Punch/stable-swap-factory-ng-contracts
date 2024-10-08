@@ -1,5 +1,4 @@
 # pragma version 0.3.10
-# pr agma opt imize g as
 # pragma evm-version cancun
 """
 @title CurveStableSwapNGMath

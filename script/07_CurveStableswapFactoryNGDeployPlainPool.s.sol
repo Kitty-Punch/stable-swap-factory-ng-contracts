@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
-import {MockToken} from "../test/mocks/MockToken.sol";
 import {ICurveStableswapFactoryNG} from "../src/interfaces/ICurveStableswapFactoryNG.sol";
 
 /*
@@ -61,8 +60,8 @@ contract CurveStableswapFactoryNGDeployPlainPoolScript is Script {
         address _token0 = address(0x0);
         address _token1 = address(0x0);
 
-        address _token0Address = _token0 == address(0x0) ? address(new MockToken()) : _token0;
-        address _token1Address = _token1 == address(0x0) ? address(new MockToken()) : _token1;
+        address _token0Address = _token0;
+        address _token1Address = _token1;
         string memory _name = "TestPool"; // Example: stETH/ETH
         string memory _symbol = "TP"; // Example: stETHETH
         address[] memory _coins = new address[](2);

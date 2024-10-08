@@ -1,5 +1,4 @@
 # pragma version 0.3.10
-# pr agma op timize co desize
 # pragma evm-version cancun
 """
 @title CurveStableSwapMetaNG
