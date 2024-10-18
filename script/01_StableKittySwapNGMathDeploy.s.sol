@@ -5,24 +5,21 @@ import {Script, console} from "forge-std/Script.sol";
 import {Consts} from "./Consts.sol";
 
 /*
-    forge script ./script/02_CurveStableSwapNGViewsDeploy.s.sol:CurveStableSwapNGViewsDeployScript --rpc-url <your-rpc-url> -vvv --broadcast
+    forge script ./script/01_StableKittySwapNGMathDeploy.s.sol:StableKittySwapNGMathDeployScript --rpc-url <your-rpc-url> -vvv --broadcast
 
     --broadcast to send the tx to the network
     -vvv to see the logs
 */
-contract CurveStableSwapNGViewsDeployScript is Script, Consts {
+contract StableKittySwapNGMathDeployScript is Script, Consts {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
 
         console.log("Starting script: broadcasting");
         vm.startBroadcast(deployerPrivateKey);
 
-        address instance = deployCode(CURVE_STABLE_SWAP_NG_VIEWS);
+        address instance = deployCode(STABLE_KITTY_SWAP_NG_MATH);
 
         vm.stopBroadcast();
-        console.log(
-            string.concat(CURVE_STABLE_SWAP_NG_VIEWS, ":    "),
-            instance
-        );
+        console.log(string.concat(STABLE_KITTY_SWAP_NG_MATH, ": "), instance);
     }
 }

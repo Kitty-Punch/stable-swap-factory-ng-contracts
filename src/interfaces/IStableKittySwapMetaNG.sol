@@ -5,9 +5,60 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * 
- 
+ * @title StableKittySwapMetaNG
+ * @author Curve.Fi
+ * @notice Stableswap Metapool implementation for 2 coins. Supports pegged assets.
+ * @dev Metapools are pools where the coin on index 1 is a liquidity pool token
+     of another pool. This exposes methods such as exchange_underlying, which
+     exchanges token 0 <> token b1, b2, .. bn, where b is base pool and bn is the
+     nth coin index of the base pool.
+     CAUTION: Does not work if base pool is an NG pool. Use a different metapool
+              implementation index in the factory.
+     Asset Types:
+        0. Standard ERC20 token with no additional features.
+                          Note: Users are advised to do careful due-diligence on
+                                ERC20 tokens that they interact with, as this
+                                contract cannot differentiate between harmless and
+                                malicious ERC20 tokens.
+        1. Oracle - token with rate oracle (e.g. wstETH)
+                    Note: Oracles may be controlled externally by an EOA. Users
+                          are advised to proceed with caution.
+        2. Rebasing - token with rebase (e.g. stETH).
+                      Note: Users and Integrators are advised to understand how
+                            the AMM contract works with rebasing balances.
+        3. ERC4626 - token with convertToAssets method (e.g. sDAI).
+                     Note: Some ERC4626 implementations may be susceptible to
+                           Donation/Inflation attacks. Users are advised to
+                           proceed with caution.
+        NOTE: Pool Cannot support tokens with multiple asset types: e.g. ERC4626
+              with fees are not supported.
+     Supports:
+        1. ERC20 support for return True/revert, return True/False, return None
+        2. ERC20 tokens can have arbitrary decimals (<=18).
+        3. ERC20 tokens that rebase (either positive or fee on transfer)
+        4. ERC20 tokens that have a rate oracle (e.g. wstETH, cbETH, sDAI, etc.)
+           Note: Oracle precision _must_ be 10**18.
+        5. ERC4626 tokens with arbitrary precision (<=18) of Vault token and underlying
+           asset.
+     Additional features include:
+        1. Adds oracles based on AMM State Price (and _not_ last traded price).
+           State prices are calculated _after_ liquidity operations, using bonding
+           curve math.
+        2. Adds an exponential moving average oracle for D.
+        3. `exchange_received`: swaps that expect an ERC20 transfer to have occurred
+           prior to executing the swap.
+           Note: a. If pool contains rebasing tokens and one of the `asset_types` is 2 (Rebasing)
+                    then calling `exchange_received` will REVERT.
+                 b. If pool contains rebasing token and `asset_types` does not contain 2 (Rebasing)
+                    then this is an incorrect implementation and rebases can be
+                    stolen.
+        4. Adds `get_dx`, `get_dx_underlying`: Similar to `get_dy` which returns an expected output
+           of coin[j] for given `dx` amount of coin[i], `get_dx` returns expected
+           input of coin[i] for an output amount of coin[j].
+        5. Fees are dynamic: AMM will charge a higher fee if pool depegs. This can cause very
+                             slight discrepancies between calculated fees and realised fees.
  */
-interface ICurveStableSwapNG is IERC20 {
+interface IStableKittySwapMetaNG is IERC20 {
     function MAX_COINS() external view returns (uint256);
 
     function MAX_COINS_128() external view returns (uint128);
@@ -23,6 +74,16 @@ interface ICurveStableSwapNG is IERC20 {
     function N_COINS_128() external view returns (uint128);
 
     function PRECISION() external view returns (uint256);
+
+    function BASE_POOL() external view returns (address);
+
+    function BASE_POOL_IS_NG() external view returns (bool);
+
+    function BASE_N_COINS() external view returns (uint256);
+
+    function BASE_COINS(uint256 _index) external view returns (address);
+
+    function math() external view returns (address);
 
     function factory() external view returns (address);
 
@@ -62,18 +123,18 @@ interface ICurveStableSwapNG is IERC20 {
 
     function admin_balances(uint256 _index) external view returns (uint256);
 
-    function rate_multipliers(uint256 _i) external view returns (uint256);
+    function rate_multiplier() external view returns (uint256);
 
-    function rate_oracles(uint256 _i) external view returns (uint256);
-
-    // For ERC4626 tokens
-    function call_amount(uint256 _i) external view returns (uint256);
+    function rate_oracle() external view returns (uint256);
 
     // For ERC4626 tokens
-    function scale_factor(uint256 _i) external view returns (uint256);
+    function call_amount() external view returns (uint256);
+
+    // For ERC4626 tokens
+    function scale_factor() external view returns (uint256);
 
     // packing: last_price, ma_price
-    function last_prices_packed(uint256 _i) external view returns (uint256);
+    function last_prices_packed() external view returns (uint256);
 
     // packing: last_D, ma_D
     function last_D_packed() external view returns (uint256);
@@ -90,7 +151,7 @@ interface ICurveStableSwapNG is IERC20 {
 
     function version() external view returns (string memory);
 
-    function totalSupply() external view returns (uint256);
+    function total_supply() external view returns (uint256);
 
     function nonces(address _index) external view returns (uint256);
 
@@ -286,20 +347,6 @@ interface ICurveStableSwapNG is IERC20 {
     ) external view returns (uint256);
 
     /**
-     * @notice Calculate the current output dy given input dx
-     * @dev Index values can be found via the `coins` public getter method
-     * @param i Index value for the coin to send
-     * @param j Index value of the coin to receive
-     * @param dx Amount of `i` being exchanged
-     * @return Amount of `j` predicted
-     */
-    function get_dy(
-        int128 i,
-        int128 j,
-        uint256 dx
-    ) external view returns (uint256);
-
-    /**
      * @notice Calculate the amount received when withdrawing a single coin
      * @param _burn_amount Amount of LP tokens to burn in the withdrawal
      * @param i Index value of the coin to withdraw
@@ -350,8 +397,6 @@ interface ICurveStableSwapNG is IERC20 {
     function ramp_A(uint256 _future_A, uint256 _future_time) external;
 
     function stop_ramp_A() external;
-
-    function A() external view returns (uint256);
 
     function set_new_fee(
         uint256 _new_fee,

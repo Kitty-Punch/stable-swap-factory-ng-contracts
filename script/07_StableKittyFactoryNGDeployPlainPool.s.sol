@@ -2,11 +2,11 @@
 pragma solidity 0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
-import {ICurveStableswapFactoryNG} from "../src/interfaces/ICurveStableswapFactoryNG.sol";
+import {IStableKittyFactoryNG} from "../src/interfaces/IStableKittyFactoryNG.sol";
 import {Consts} from "./Consts.sol";
 
 /*
-    forge script ./script/07_CurveStableswapFactoryNGDeployPlainPool.s.sol:CurveStableswapFactoryNGDeployPlainPoolScript --rpc-url <your-rpc-url> -vvv --broadcast
+    forge script ./script/07_StableKittyFactoryNGDeployPlainPool.s.sol:StableKittyFactoryNGDeployPlainPoolScript --rpc-url <your-rpc-url> -vvv --broadcast
 
     --broadcast to send the tx to the network
     -vvv to see the logs
@@ -46,11 +46,11 @@ import {Consts} from "./Consts.sol";
             ]
         }
 */
-contract CurveStableswapFactoryNGDeployPlainPoolScript is Script, Consts {
+contract StableKittyFactoryNGDeployPlainPoolScript is Script, Consts {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
-        ICurveStableswapFactoryNG _factory = ICurveStableswapFactoryNG(
-            address(0xDF16Fa72D525c7ec54E525fFE23617a82FB72D68)
+        IStableKittyFactoryNG _factory = IStableKittyFactoryNG(
+            address(0xf4849506e929f9041dEec3D8C7d7d47230920e54)
         );
         // uint256 _poolImplId = 0;
         // address _poolImpl = address(0x0);
@@ -67,8 +67,8 @@ contract CurveStableswapFactoryNGDeployPlainPoolScript is Script, Consts {
 
         address _token0Address = uptober;
         address _token1Address = moonvember;
-        string memory _name = "UP/MOON v2"; // Example: stETH/ETH
-        string memory _symbol = "UPMOONv2"; // Example: stETHETH
+        string memory _name = "skUP/MOON"; // Example: stETH/ETH
+        string memory _symbol = "skUPMOON"; // Example: stETHETH
         uint256 _A = 200;
         uint256 _fee = 4000000; // 0.04%
         uint256 _offpeg_fee_multiplier = 20000000000; // 2
