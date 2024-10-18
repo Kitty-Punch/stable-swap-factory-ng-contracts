@@ -1,0 +1,53 @@
+name: run-ape
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ "*" ]
+
+env:
+  FOUNDRY_PROFILE: ci
+  ETH_MAINNET_RPC_URL: ${{ secrets.ETH_MAINNET_RPC_URL}}
+  BSC_MAINNET_RPC_URL: ${{ secrets.BSC_MAINNET_RPC_URL}}
+  MATIC_MAINNET_RPC_URL: ${{ secrets.MATIC_MAINNET_RPC_URL}}
+  ARB_MAINNET_RPC_URL: ${{ secrets.ARB_MAINNET_RPC_URL}}
+  OP_MAINNET_RPC_URL: ${{ secrets.OP_MAINNET_RPC_URL}}
+  AVAX_MAINNET_RPC_URL: ${{ secrets.AVAX_MAINNET_RPC_URL}}
+  FTM_MAINNET_RPC_URL: ${{ secrets.FTM_MAINNET_RPC_URL}}
+  BASE_MAINNET_RPC_URL: ${{ secrets.BASE_MAINNET_RPC_URL}}
+  ZKSYNC_MAINNET_RPC_URL: ${{ secrets.ZKSYNC_MAINNET_RPC_URL}}
+
+jobs:
+  check:
+    strategy:
+      fail-fast: true
+
+    name: Foundry project
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4.1.7
+        with:
+          submodules: recursive
+      - uses: foundry-rs/foundry-toolchain@v1
+        name: Install Foundry
+        with:
+          version: nightly
+      - name: Install Forge Dependencies
+        run: |
+          forge install foundry-rs/forge-std --no-commit
+          forge install openzeppelin/openzeppelin-contracts --no-commit
+        id: install
+      - uses: ApeWorX/github-action@v3.0
+        with:
+            python-version: '3.10' # (optional)
+            ape-plugins-list: 'vyper foundry'
+      # - run: ape test -s
+      - run: ape --version

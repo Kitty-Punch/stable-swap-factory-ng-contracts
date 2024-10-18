@@ -1,7 +1,7 @@
 # pragma version 0.3.10
 # pragma evm-version cancun
 """
-@title CurveStableswapFactoryNG
+@title StableKittyFactoryNG
 @author Curve.Fi
 @license Copyright (c) Curve.Fi, 2023 - all rights reserved
 @notice Permissionless pool deployer and registry
@@ -192,7 +192,7 @@ def get_underlying_coins(_pool: address) -> DynArray[address, MAX_COINS]:
     """
     coins: DynArray[address, MAX_COINS] = empty(DynArray[address, MAX_COINS])
     base_pool: address = self.pool_data[_pool].base_pool
-    assert base_pool != empty(address)  # dev: pool is not metapool
+    assert base_pool != empty(address), "base pool is empty"  # dev: pool is not metapool
 
     coins.append(self.pool_data[_pool].coins[0])
     base_pool_n_coins: uint256 = len(self.base_pool_data[base_pool].coins)
@@ -294,7 +294,7 @@ def get_underlying_balances(_pool: address) -> DynArray[uint256, MAX_COINS]:
     """
 
     base_pool: address = self.pool_data[_pool].base_pool
-    assert base_pool != empty(address)  # dev: pool is not a metapool
+    assert base_pool != empty(address), "base pool is empty"  # dev: pool is not a metapool
 
     underlying_balances: DynArray[uint256, MAX_COINS] = empty(DynArray[uint256, MAX_COINS])
     underlying_balances[0] = CurvePool(_pool).balances(0)
@@ -492,12 +492,12 @@ def deploy_plain_pool(
     @param _oracles Array of rate oracle addresses.
     @return Address of the deployed pool
     """
-    assert len(_coins) >= 2  # dev: pool needs to have at least two coins!
-    assert len(_coins) == len(_method_ids)  # dev: All coin arrays should be same length
-    assert len(_coins) ==  len(_oracles)  # dev: All coin arrays should be same length
-    assert len(_coins) ==  len(_asset_types)  # dev: All coin arrays should be same length
+    assert len(_coins) >= 2, "Pool needs at least two coins"  # dev: pool needs to have at least two coins!
+    assert len(_coins) == len(_method_ids), "Method ids have an invalid length"  # dev: All coin arrays should be same length
+    assert len(_coins) ==  len(_oracles), "Oracles have an invalid length"  # dev: All coin arrays should be same length
+    assert len(_coins) ==  len(_asset_types), "Asset types have an invalid length"  # dev: All coin arrays should be same length
     assert _fee <= 100000000, "Invalid fee"
-    assert _offpeg_fee_multiplier * _fee <= MAX_FEE * FEE_DENOMINATOR
+    assert _offpeg_fee_multiplier * _fee <= MAX_FEE * FEE_DENOMINATOR, "Fee and multiplier too high"
 
     n_coins: uint256 = len(_coins)
     _rate_multipliers: DynArray[uint256, MAX_COINS] = empty(DynArray[uint256, MAX_COINS])
@@ -611,7 +611,7 @@ def deploy_metapool(
     """
     assert not self.base_pool_assets[_coin], "Invalid asset: Cannot pair base pool asset with base pool's LP token"
     assert _fee <= 100000000, "Invalid fee"
-    assert _offpeg_fee_multiplier * _fee <= MAX_FEE * FEE_DENOMINATOR
+    assert _offpeg_fee_multiplier * _fee <= MAX_FEE * FEE_DENOMINATOR, "Fee and multiplier too high"
 
     base_pool_n_coins: uint256 = len(self.base_pool_data[_base_pool].coins)
     assert base_pool_n_coins != 0, "Base pool is not added"
@@ -728,10 +728,10 @@ def add_base_pool(
     @param _base_pool Pool address to add
     @param _asset_types Asset type for pool, as an integer
     """
-    assert msg.sender == self.admin  # dev: admin-only function
-    assert 2 not in _asset_types  # dev: rebasing tokens cannot be in base pool
-    assert len(self.base_pool_data[_base_pool].coins) == 0  # dev: pool exists
-    assert _n_coins < MAX_COINS  # dev: base pool can only have (MAX_COINS - 1) coins.
+    assert msg.sender == self.admin, "Add base pool is admin-only"  # dev: admin-only function
+    assert 2 not in _asset_types, "Rebasing tokens are not supported"  # dev: rebasing tokens cannot be in base pool
+    assert len(self.base_pool_data[_base_pool].coins) == 0, "Pool already exists"  # dev: pool exists
+    assert _n_coins < MAX_COINS, "N coins exceeds max coins"  # dev: base pool can only have (MAX_COINS - 1) coins.
 
     # add pool to pool_list
     length: uint256 = self.base_pool_count
@@ -748,7 +748,7 @@ def add_base_pool(
         if i == _n_coins:
             break
         coin = CurvePool(_base_pool).coins(i)
-        assert coin != 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE  # dev: native token is not supported
+        assert coin != 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE, "Native token is not supported"  # dev: native token is not supported
         self.base_pool_data[_base_pool].coins.append(coin)
         self.base_pool_assets[coin] = True
         decimals += (ERC20(coin).decimals() << i*8)
@@ -768,7 +768,7 @@ def set_pool_implementations(
     @param _implementation_index Implementation index where implementation is stored
     @param _implementation Implementation address to use when deploying plain pools
     """
-    assert msg.sender == self.admin  # dev: admin-only function
+    assert msg.sender == self.admin, "Set pool impl is admin only"  # dev: admin-only function
     self.pool_implementations[_implementation_index] = _implementation
 
 
@@ -783,7 +783,7 @@ def set_metapool_implementations(
     @param _implementation_index Implementation index where implementation is stored
     @param _implementation Implementation address to use when deploying meta pools
     """
-    assert msg.sender == self.admin  # dev: admin-only function
+    assert msg.sender == self.admin, "Set metapool impl is admin-only"  # dev: admin-only function
     self.metapool_implementations[_implementation_index] = _implementation
 
 
@@ -794,7 +794,7 @@ def set_math_implementation(_math_implementation: address):
     @dev Only callable by admin
     @param _math_implementation Address of the math implementation contract
     """
-    assert msg.sender == self.admin  # dev: admin-only function
+    assert msg.sender == self.admin, "Set math impl is admin-only"  # dev: admin-only function
     self.math_implementation = _math_implementation
 
 
@@ -805,7 +805,7 @@ def set_gauge_implementation(_gauge_implementation: address):
     @dev Only callable by admin
     @param _gauge_implementation Address of the gauge blueprint implementation contract
     """
-    assert msg.sender == self.admin  # dev: admin-only function
+    assert msg.sender == self.admin, "Set gauge impl is admin-only"  # dev: admin-only function
     self.gauge_implementation = _gauge_implementation
 
 
@@ -816,7 +816,7 @@ def set_views_implementation(_views_implementation: address):
     @dev Only callable by admin
     @param _views_implementation Implementation address of views contract
     """
-    assert msg.sender == self.admin  # dev: admin-only function
+    assert msg.sender == self.admin, "Set views is admin-only"  # dev: admin-only function
     self.views_implementation = _views_implementation
 
 
@@ -826,7 +826,7 @@ def commit_transfer_ownership(_addr: address):
     @notice Transfer ownership of this contract to `addr`
     @param _addr Address of the new owner
     """
-    assert msg.sender == self.admin  # dev: admin only
+    assert msg.sender == self.admin, "Commit owner transfer is admin-only"  # dev: admin only
     self.future_admin = _addr
 
 
@@ -837,7 +837,7 @@ def accept_transfer_ownership():
     @dev Only callable by the new owner
     """
     _admin: address = self.future_admin
-    assert msg.sender == _admin  # dev: future admin only
+    assert msg.sender == _admin, "Accept owner transfer is admin-only"  # dev: future admin only
 
     self.admin = _admin
     self.future_admin = empty(address)
@@ -850,7 +850,7 @@ def set_fee_receiver(_pool: address, _fee_receiver: address):
     @param _pool Address of  pool to set fee receiver for.
     @param _fee_receiver Address that fees are sent to
     """
-    assert msg.sender == self.admin  # dev: admin only
+    assert msg.sender == self.admin, "Set fee receiver is admin-only"  # dev: admin only
     self.fee_receiver = _fee_receiver
 
 
@@ -861,5 +861,5 @@ def add_asset_type(_id: uint8, _name: String[10]):
     @param _id asset type id.
     @param _name Name of the asset type.
     """
-    assert msg.sender == self.admin  # dev: admin only
+    assert msg.sender == self.admin, "Add asset type is admin-only"  # dev: admin only
     self.asset_types[_id] = _name

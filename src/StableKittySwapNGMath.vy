@@ -1,8 +1,7 @@
 # pragma version 0.3.10
-# pr agma opt imize g as
 # pragma evm-version cancun
 """
-@title CurveStableSwapNGMath
+@title StableKittySwapNGMath
 @author Curve.Fi
 @license Copyright (c) Curve.Fi, 2020-2023 - all rights reserved
 @notice Math for StableSwapMetaNG implementation
@@ -37,13 +36,13 @@ def get_y(
 
     n_coins_128: int128 = convert(_n_coins, int128)
 
-    assert i != j       # dev: same coin
-    assert j >= 0       # dev: j below zero
-    assert j < n_coins_128  # dev: j above N_COINS
+    assert i != j, "Indexes cannot be same"       # dev: same coin
+    assert j >= 0, "J index cannot be below zero"       # dev: j below zero
+    assert j < n_coins_128, "J index cannot be above N_COINS"  # dev: j above N_COINS
 
     # should be unreachable, but good for safety
-    assert i >= 0
-    assert i < n_coins_128
+    assert i >= 0, "I index cannot be below zero"       # dev: i below zero
+    assert i < n_coins_128, "I index cannot be above N_COINS"  # dev: i above N_COINS
 
     amp: uint256 = _amp
     D: uint256 = _D
@@ -160,8 +159,8 @@ def get_y_D(
 
     n_coins_128: int128 = convert(_n_coins, int128)
 
-    assert i >= 0  # dev: i below zero
-    assert i < n_coins_128  # dev: i above N_COINS
+    assert i >= 0, "I index cannot be below zero"  # dev: i below zero
+    assert i < n_coins_128, "I index cannot be above N_COINS"  # dev: i above N_COINS
 
     S_: uint256 = 0
     _x: uint256 = 0
