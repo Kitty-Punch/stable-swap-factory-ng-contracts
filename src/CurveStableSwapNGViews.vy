@@ -555,13 +555,13 @@ def get_y(
     """
     # x in the input is converted to the same price/precision
 
-    assert i != j       # dev: same coin
-    assert j >= 0       # dev: j below zero
-    assert j < convert(N_COINS, int128)  # dev: j above N_COINS
+    assert i != j, "Indexes cannot be same"       # dev: same coin
+    assert j >= 0, "J index cannot be below zero"       # dev: j below zero
+    assert j < convert(N_COINS, int128), "J index cannot be above N_COINS"  # dev: j above N_COINS
 
     # should be unreachable, but good for safety
-    assert i >= 0
-    assert i < convert(N_COINS, int128)
+    assert i >= 0, "I index cannot be below zero"       # dev: i below zero
+    assert i < convert(N_COINS, int128), "I index cannot be above N_COINS"  # dev: i above N_COINS
 
     amp: uint256 = _amp
     D: uint256 = _D
@@ -657,8 +657,8 @@ def get_y_D(
     # x in the input is converted to the same price/precision
 
     N_COINS_128: int128 = convert(N_COINS, int128)
-    assert i >= 0  # dev: i below zero
-    assert i < N_COINS_128  # dev: i above N_COINS
+    assert i >= 0, "I index cannot be below zero"  # dev: i below zero
+    assert i < N_COINS_128, "I index cannot be above N_COINS"  # dev: i above N_COINS
 
     S_: uint256 = 0
     _x: uint256 = 0

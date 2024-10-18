@@ -50,47 +50,50 @@ contract CurveStableswapFactoryNGDeployPlainPoolScript is Script {
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
-        ICurveStableswapFactoryNG _factory = ICurveStableswapFactoryNG(address(0x0));
-        uint256 _poolImplId = 0;
-        address _poolImpl = address(0x0);
-        uint256 _metaPoolImplId = 0;
-        address _metaPoolImpl = address(0x0);
-        address _mathImpl = address(0x0);
-        address _viewImpl = address(0x0);
-        address _token0 = address(0x0);
-        address _token1 = address(0x0);
+        ICurveStableswapFactoryNG _factory = ICurveStableswapFactoryNG(address(0x0699C35C0104e478f510531F5Dfc3F9313ae49D1));
+        // uint256 _poolImplId = 0;
+        // address _poolImpl = address(0x3f2EfC4f851759C6B677b53C7520CDEcD749c94a);
+        // uint256 _metaPoolImplId = 0;
+        // address _metaPoolImpl = address(0x9fcF233e3CD6256CCAD53ce355e93ce318d613a1);
+        // address _mathImpl = address(0x73B810FeEb9e328f2b9a0440BAa3d154F80a7FFe);
+        // address _viewImpl = address(0xa9D53F87C2629FC4C723BC93Cd29Aa1F002b1B3A);
 
-        address _token0Address = _token0;
-        address _token1Address = _token1;
-        string memory _name = "TestPool"; // Example: stETH/ETH
-        string memory _symbol = "TP"; // Example: stETHETH
-        address[] memory _coins = new address[](2);
-        _coins[0] = address(_token0Address);
-        _coins[1] = address(_token1Address);
+        address uptober = address(0xa540b4Ba1bDe8ADC18728ea367e69D7867c69682);
+        address moonvember = address(0xaB7d17A87442da38D900F7280947Ad68Fe361d66);
+        // address bullcember = address(0x44008c1c6d68EF882FEB807c08a300831B48d635);
+
+        address _token0Address = uptober;
+        address _token1Address = moonvember;
+        string memory _name = "UP/MOON"; // Example: stETH/ETH
+        string memory _symbol = "UPMOON"; // Example: stETHETH
+        // address[] memory _coins = new address[](2);
+        // _coins[0] = address(_token0Address);
+        // _coins[1] = address(_token1Address);
         uint256 _A = 200;
         uint256 _fee = 4000000; // 0.04%
         uint256 _offpeg_fee_multiplier = 20000000000; // 2
         uint256 _ma_exp_time = 866;
         uint256 _implementation_idx = 0;
-        uint8[] memory _asset_types = new uint8[](2); // 0, 0 by default -FIAT-
-        bytes4[] memory _method_ids = new bytes4[](2); // 0x00000000 by default
-        address[] memory _oracles = new address[](2); // address(0x0) by default
+        // uint8[] memory _asset_types = new uint8[](2); // 0, 0 by default -FIAT-
+        // bytes4[] memory _method_ids = new bytes4[](2); // 0x00000000 by default
+        // address[] memory _oracles = new address[](2); // address(0x0) by default
 
         console.log("Factory:       ", address(_factory));
         console.log("Fee receiver:  ", _factory.fee_receiver());
+        console.log("Pool Impl:     ", _factory.pool_implementations(0));
 
-        require(_factory.pool_implementations(_poolImplId) == _poolImpl, "Pool implementation not the same");
-        require(_factory.metapool_implementations(_metaPoolImplId) == _metaPoolImpl, "Metapool implementation not the same");
-        require(_factory.math_implementation() == _mathImpl, "Math implementation not the same");
-        require(_factory.views_implementation() == _viewImpl, "Views implementation not the same");
-        require(_factory.fee_receiver() != address(0), "Fee receiver not set");
-        require(_factory.pool_implementations(_poolImplId) != address(0), "Pool implementation not set");
-        require(_factory.metapool_implementations(_metaPoolImplId) != address(0), "Metapool implementation not set");
-        require(_factory.math_implementation() != address(0), "Math implementation not set");
-        require(_factory.views_implementation() != address(0), "Views implementation not set");
-        require(_coins.length == _asset_types.length, "Coins vs asset types length is not valid");
-        require(_coins.length == _method_ids.length, "Coins vs method ids length is not valid");
-        require(_coins.length == _oracles.length, "Coins vs oracles length is not valid");
+        // require(_factory.pool_implementations(_poolImplId) == _poolImpl, "Pool implementation not the same");
+        // require(_factory.metapool_implementations(_metaPoolImplId) == _metaPoolImpl, "Metapool implementation not the same");
+        // require(_factory.math_implementation() == _mathImpl, "Math implementation not the same");
+        // require(_factory.views_implementation() == _viewImpl, "Views implementation not the same");
+        // require(_factory.fee_receiver() != address(0), "Fee receiver not set");
+        // require(_factory.pool_implementations(_poolImplId) != address(0), "Pool implementation not set");
+        // require(_factory.metapool_implementations(_metaPoolImplId) != address(0), "Metapool implementation not set");
+        // require(_factory.math_implementation() != address(0), "Math implementation not set");
+        // require(_factory.views_implementation() != address(0), "Views implementation not set");
+        // require(_coins.length == _asset_types.length, "Coins vs asset types length is not valid");
+        // require(_coins.length == _method_ids.length, "Coins vs method ids length is not valid");
+        // require(_coins.length == _oracles.length, "Coins vs oracles length is not valid");
 
         console.log("Starting script: broadcasting");
         vm.startBroadcast(deployerPrivateKey);
@@ -98,18 +101,37 @@ contract CurveStableswapFactoryNGDeployPlainPoolScript is Script {
         address _newPool = _factory.deploy_plain_pool(
             _name,
             _symbol,
-            _coins,
+            _getCoinsList(_token0Address, _token1Address),
             _A,
             _fee,
             _offpeg_fee_multiplier,
             _ma_exp_time,
             _implementation_idx,
-            _asset_types,
-            _method_ids,
-            _oracles
+            _getAssetTypes(),
+            _getMethodIds(),
+            _getOracles()
         );
 
         vm.stopBroadcast();
         console.log("New pool:     ", _newPool);
+    }
+
+    function _getCoinsList(address _token0, address _token1) internal pure returns (address[] memory) {
+        address[] memory _coins = new address[](2);
+        _coins[0] = address(_token0);
+        _coins[1] = address(_token1);
+        return _coins;
+    }
+
+    function _getAssetTypes() internal pure returns (uint8[] memory) {
+        return new uint8[](2); // 0, 0 by default -FIAT-
+    }
+
+    function _getMethodIds() internal pure returns (bytes4[] memory) {
+        return new bytes4[](2); // 0x00000000 by default
+    }
+
+    function _getOracles() internal pure returns (address[] memory) {
+        return new address[](2); // address(0x0) by default
     }
 }

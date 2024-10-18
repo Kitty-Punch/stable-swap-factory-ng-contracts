@@ -4,8 +4,16 @@ pragma solidity 0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {MockToken} from "./mocks/MockToken.sol";
 import {ICurveStableswapFactoryNG} from "../src/interfaces/ICurveStableswapFactoryNG.sol";
+import {VyperDeployer} from "./utils/VyperDeployer.sol";
 
 abstract contract CurveStableswapNGUtils is Test {
+
+    VyperDeployer internal deployer;
+
+    function setUp() public virtual {
+        deployer = new VyperDeployer();
+    }
+
     function _deployFactory(
         address _feeReceiver,
         address _owner
@@ -18,6 +26,7 @@ abstract contract CurveStableswapNGUtils is Test {
                 _deployCurveStableSwapFactoryNG(_feeReceiver, _owner)
             );
 
+        vm.startPrank(_owner);
         _curveStableSwapFactoryNG.set_pool_implementations(
             0,
             _curveStableSwapNG
@@ -32,6 +41,7 @@ abstract contract CurveStableswapNGUtils is Test {
         _curveStableSwapFactoryNG.set_views_implementation(
             _curveStableSwapNGViews
         );
+        vm.stopPrank();
         return _curveStableSwapFactoryNG;
     }
 
@@ -57,6 +67,7 @@ abstract contract CurveStableswapNGUtils is Test {
         address _owner
     ) internal returns (address) {
         vm.startPrank(_owner);
+        /*
         address instance = deployCode(
             "CurveStableSwapNG",
             abi.encode(
@@ -73,6 +84,10 @@ abstract contract CurveStableswapNGUtils is Test {
                 new address[](0) // _oracles: DynArray[address, MAX_COINS],
             )
         );
+        */
+        bytes memory bytecodeBlueprint = deployer.getDeployBytecodeBlueprint("CurveStableSwapNG", "codesize");
+        // address instance = deployer.deployBytecodeBlueprint(bytecodeBlueprint);
+        address instance = _deployCode(bytecodeBlueprint, "");
         vm.stopPrank();
         return instance;
     }
@@ -81,6 +96,7 @@ abstract contract CurveStableswapNGUtils is Test {
         address _owner
     ) internal returns (address) {
         vm.startPrank(_owner);
+        /*
         address instance = deployCode(
             "CurveStableSwapMetaNG",
             abi.encode(
@@ -100,8 +116,27 @@ abstract contract CurveStableswapNGUtils is Test {
                 new address[](1) // _oracles: DynArray[address, MAX_COINS],
             )
         );
+        */
+        bytes memory bytecodeBlueprint = deployer.getDeployBytecodeBlueprint("CurveStableSwapMetaNG", "codesize");
+        address instance = _deployCode(bytecodeBlueprint, "");
         vm.stopPrank();
         return instance;
+    }
+
+    function _deployCode(bytes memory bytecode, bytes memory args) internal virtual returns (address addr) {
+        uint256 val = 0;
+        bytes memory bytecodeWithArgs;
+        if (args.length == 0) {
+            bytecodeWithArgs = bytecode;
+        } else {
+            bytecodeWithArgs = abi.encodePacked(bytecode, args);
+        }
+        /// @solidity memory-safe-assembly
+        assembly {
+            addr := create(val, add(bytecodeWithArgs, 0x20), mload(bytecodeWithArgs))
+        }
+
+        require(addr != address(0), "CustomUtils deployCode(bytes,bytes): Deployment failed.");
     }
 
     function _deployCurveStableSwapFactoryNG(

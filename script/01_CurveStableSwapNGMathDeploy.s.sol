@@ -2,8 +2,6 @@
 pragma solidity 0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
-import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
-import {Blueprint} from "../src/lib/Blueprint.sol";
 
 /*
     forge script ./script/01_CurveStableSwapNGMathDeploy.s.sol:CurveStableSwapNGMathDeployScript --rpc-url <your-rpc-url> -vvv --broadcast
@@ -16,26 +14,13 @@ contract CurveStableSwapNGMathDeployScript is Script {
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
-        bytes32 _salt = "";
 
         console.log("Starting script: broadcasting");
         vm.startBroadcast(deployerPrivateKey);
 
-        // address instance = deployCode("CurveStableSwapNGMath");
-        address instance = _deployCurveStableSwapNGMath(_salt);
+        address instance = deployCode("CurveStableSwapNGMath");
 
         vm.stopBroadcast();
         console.log("CurveStableSwapNGMath:     ", instance);
-    }
-
-    function _deployCurveStableSwapNGMath(
-        bytes32 _salt
-    ) internal returns (address) {
-        bytes memory bytecode = vm.getCode("CurveStableSwapNGMath");
-        bytes memory bytecodeBlueprint = Blueprint.blueprintDeployerBytecode(
-            bytecode
-        );
-        address instance = Create2.deploy(0, _salt, bytecodeBlueprint);
-        return instance;
     }
 }

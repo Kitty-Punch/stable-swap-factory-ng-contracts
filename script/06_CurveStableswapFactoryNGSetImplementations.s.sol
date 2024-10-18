@@ -15,14 +15,14 @@ contract CurveStableswapFactoryNGSetImplementationsScript is Script {
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
-        ICurveStableswapFactoryNG _factory = ICurveStableswapFactoryNG(address(0x0));
+        ICurveStableswapFactoryNG _factory = ICurveStableswapFactoryNG(address(0x0699C35C0104e478f510531F5Dfc3F9313ae49D1));
         uint256 _poolImplId = 0;
-        address _poolImpl = address(0x0);
+        address _poolImpl = address(0x3f2EfC4f851759C6B677b53C7520CDEcD749c94a);
         uint256 _metaPoolImplId = 0;
-        address _metaPoolImpl = address(0x0);
-        address _mathImpl = address(0x0);
-        address _viewImpl = address(0x0);
-        
+        address _metaPoolImpl = address(0x9fcF233e3CD6256CCAD53ce355e93ce318d613a1);
+        address _mathImpl = address(0x73B810FeEb9e328f2b9a0440BAa3d154F80a7FFe);
+        address _viewImpl = address(0xa9D53F87C2629FC4C723BC93Cd29Aa1F002b1B3A); 
+
         console.log("Factory:       ", address(_factory));
         console.log("Fee receiver:  ", _factory.fee_receiver());
 
