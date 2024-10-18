@@ -1,7 +1,7 @@
 # pragma version 0.3.10
 # pragma evm-version cancun
 """
-@title CurveStableSwapNGViews
+@title StableKittySwapNGViews
 @author Curve.Fi
 @license Copyright (c) Curve.Fi, 2020-2023 - all rights reserved
 @notice Auxiliary contract for Stableswap-NG containing utility methods for

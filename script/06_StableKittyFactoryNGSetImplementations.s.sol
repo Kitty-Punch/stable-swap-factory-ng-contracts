@@ -2,25 +2,25 @@
 pragma solidity 0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
-import {ICurveStableswapFactoryNG} from "../src/interfaces/ICurveStableswapFactoryNG.sol";
+import {IStableKittyFactoryNG} from "../src/interfaces/IStableKittyFactoryNG.sol";
 import {Consts} from "./Consts.sol";
 
 /*
-    forge script ./script/06_CurveStableswapFactoryNGSetImplementations.s.sol:CurveStableswapFactoryNGSetImplementationsScript --rpc-url <your-rpc-url> -vvv --broadcast
+    forge script ./script/06_StableKittyFactoryNGSetImplementations.s.sol:StableKittyFactoryNGSetImplementationsScript --rpc-url <your-rpc-url> -vvv --broadcast
 
     --broadcast to send the tx to the network
     -vvv to see the logs
 */
-contract CurveStableswapFactoryNGSetImplementationsScript is Script, Consts {
+contract StableKittyFactoryNGSetImplementationsScript is Script, Consts {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
-        ICurveStableswapFactoryNG _factory = ICurveStableswapFactoryNG(address(0xDF16Fa72D525c7ec54E525fFE23617a82FB72D68));
+        IStableKittyFactoryNG _factory = IStableKittyFactoryNG(address(0xf4849506e929f9041dEec3D8C7d7d47230920e54));
         uint256 _poolImplId = 0;
-        address _poolImpl = address(0x07f7767deDa26C3FeB1dCFEFD939cfF920Ac5EcE);
+        address _poolImpl = address(0xaA01f74e2310f6C1A105EbC39f6f143a28c05655);
         uint256 _metaPoolImplId = 0;
-        address _metaPoolImpl = address(0x9B3B947B93901Ff750327528C3Bd3eCd79CCd503);
-        address _mathImpl = address(0xFc4e3d3D57487cab3FB610fB188b6c4514d78008);
-        address _viewImpl = address(0xfa7074E024cA8227407cfB07Dd14DF0C3d75b5c6);
+        address _metaPoolImpl = address(0x2F8Bc9115FF151150D48aa9eBC9fad2555E04f5f);
+        address _mathImpl = address(0xd8e4f6DEb6d4eDF7665fAc0fD234da339f106Aea);
+        address _viewImpl = address(0x6eA2D53D70b323Bc24F8dD168cb9e28Cc70EBfd2);
 
         console.log("Factory:       ", address(_factory));
         console.log("Fee receiver:  ", _factory.fee_receiver());
@@ -41,6 +41,6 @@ contract CurveStableswapFactoryNGSetImplementationsScript is Script, Consts {
         require(_factory.fee_receiver() != address(0), "Fee receiver not set");
 
         vm.stopBroadcast();
-        console.log("CurveStableswapFactoryNG instance implementations set properly...");
+        console.log("StableKittyFactoryNG instance implementations set properly...");
     }
 }

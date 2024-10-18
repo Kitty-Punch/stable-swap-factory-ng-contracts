@@ -1,7 +1,7 @@
 # pragma version 0.3.10
 # pragma evm-version cancun
 """
-@title CurveStableswapFactoryNG
+@title StableKittyFactoryNG
 @author Curve.Fi
 @license Copyright (c) Curve.Fi, 2023 - all rights reserved
 @notice Permissionless pool deployer and registry

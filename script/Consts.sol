@@ -7,11 +7,11 @@ import {VyperDeployer} from "../test/utils/VyperDeployer.sol";
 abstract contract Consts {
     string public constant PARAM_PK_ACCOUNT = "PK_ACCOUNT";
     string public constant PARAM_OWNER = "OWNER";
-    string constant CURVE_STABLE_SWAP_FACTORY_NG = "CurveStableswapFactoryNG";
-    string constant CURVE_STABLE_SWAP_META_NG = "CurveStableSwapMetaNG";
-    string constant CURVE_STABLE_SWAP_NG = "CurveStableSwapNG";
-    string constant CURVE_STABLE_SWAP_NG_MATH = "CurveStableSwapNGMath";
-    string constant CURVE_STABLE_SWAP_NG_VIEWS = "CurveStableSwapNGViews";
+    string constant STABLE_KITTY_FACTORY_NG = "StableKittyFactoryNG";
+    string constant STABLE_KITTY_SWAP_META_NG = "StableKittySwapMetaNG";
+    string constant STABLE_KITTY_SWAP_NG = "StableKittySwapNG";
+    string constant STABLE_KITTY_SWAP_NG_MATH = "StableKittySwapNGMath";
+    string constant STABLE_KITTY_SWAP_NG_VIEWS = "StableKittySwapNGViews";
 
     function _getBytecodeBlueprint(
         string memory _contractName,

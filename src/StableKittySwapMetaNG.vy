@@ -1,7 +1,7 @@
 # pragma version 0.3.10
 # pragma evm-version cancun
 """
-@title CurveStableSwapMetaNG
+@title StableKittySwapMetaNG
 @author Curve.Fi
 @license Copyright (c) Curve.Fi, 2020-2023 - all rights reserved
 @notice Stableswap Metapool implementation for 2 coins. Supports pegged assets.

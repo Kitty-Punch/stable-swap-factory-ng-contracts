@@ -2,23 +2,22 @@
 pragma solidity 0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
-import {ICurveStableswapFactoryNG} from "../src/interfaces/ICurveStableswapFactoryNG.sol";
-import {ICurveStableSwapNG} from "../src/interfaces/ICurveStableSwapNG.sol";
+import {IStableKittySwapNG} from "../src/interfaces/IStableKittySwapNG.sol";
 import {MockToken} from "../test/mocks/MockToken.sol";
 import {Consts} from "./Consts.sol";
 
 /*
-    forge script ./script/08_CurveStableswapNGAddLiquidity.s.sol:CurveStableswapNGAddLiquidityScript --rpc-url <your-rpc-url> -vvv --broadcast
+    forge script ./script/08_StableKittyFactoryNGAddLiquidity.s.sol:StableKittyFactoryNGAddLiquidityScript --rpc-url <your-rpc-url> -vvv --broadcast
 
     --broadcast to send the tx to the network
     -vvv to see the logs
 */
-contract CurveStableswapNGAddLiquidityScript is Script, Consts {
+contract StableKittyFactoryNGAddLiquidityScript is Script, Consts {
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
         address _creator = vm.envAddress(PARAM_OWNER);
-        ICurveStableSwapNG _pool = ICurveStableSwapNG(address(0x04a1B466b6bF033f5691Bea71A9a30f6c59d26c7));
+        IStableKittySwapNG _pool = IStableKittySwapNG(address(0xd6a5A7BdDBC8973C1fC589720d07f0c171351C67));
         address uptober = address(0xa540b4Ba1bDe8ADC18728ea367e69D7867c69682);
         address moonvember = address(
             0xaB7d17A87442da38D900F7280947Ad68Fe361d66

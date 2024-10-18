@@ -1,7 +1,7 @@
 # pragma version 0.3.10
 # pragma evm-version cancun
 """
-@title CurveStableSwapNG
+@title StableKittySwapNG
 @author Curve.Fi
 @license Copyright (c) Curve.Fi, 2020-2023 - all rights reserved
 @notice Stableswap implementation for up to 8 coins with no rehypothecation,

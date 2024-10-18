@@ -5,15 +5,15 @@ import {Script, console} from "forge-std/Script.sol";
 import {Consts} from "./Consts.sol";
 
 /*
-    forge script ./script/04_CurveStableSwapMetaNGDeploy.s.sol:CurveStableSwapMetaNGDeployScript --rpc-url <your-rpc-url> -vvv --broadcast
+    forge script ./script/03_StableKittySwapNGDeploy.s.sol:StableKittySwapNGDeployScript --rpc-url <your-rpc-url> -vvv --broadcast
 
     --broadcast to send the tx to the network
     -vvv to see the logs
 */
-contract CurveStableSwapMetaNGDeployScript is Script, Consts {
+contract StableKittySwapNGDeployScript is Script, Consts {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
-        string memory contractName = CURVE_STABLE_SWAP_META_NG;
+        string memory contractName = STABLE_KITTY_SWAP_NG;
 
         bytes memory deployBytecode = _getBytecodeBlueprint(
             contractName,

@@ -5,12 +5,12 @@ import {Script, console} from "forge-std/Script.sol";
 import {Consts} from "./Consts.sol";
 
 /*
-    forge script ./script/05_CurveStableswapFactoryNGDeploy.s.sol:CurveStableswapFactoryNGDeployScript --rpc-url <your-rpc-url> -vvv --broadcast
+    forge script ./script/05_StableKittyFactoryNGDeploy.s.sol:StableKittyFactoryNGDeployScript --rpc-url <your-rpc-url> -vvv --broadcast
 
     --broadcast to send the tx to the network
     -vvv to see the logs
 */
-contract CurveStableswapFactoryNGDeployScript is Script, Consts {
+contract StableKittyFactoryNGDeployScript is Script, Consts {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
         address _owner = vm.envAddress(PARAM_OWNER);
@@ -23,13 +23,13 @@ contract CurveStableswapFactoryNGDeployScript is Script, Consts {
         vm.startBroadcast(deployerPrivateKey);
 
         address instance = deployCode(
-            CURVE_STABLE_SWAP_FACTORY_NG,
+            STABLE_KITTY_FACTORY_NG,
             abi.encode(_feeReceiver, _owner)
         );
 
         vm.stopBroadcast();
         console.log(
-            string.concat(CURVE_STABLE_SWAP_FACTORY_NG, ":  "),
+            string.concat(STABLE_KITTY_FACTORY_NG, ":  "),
             instance
         );
     }

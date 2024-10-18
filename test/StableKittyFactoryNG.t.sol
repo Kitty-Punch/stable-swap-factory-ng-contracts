@@ -3,17 +3,17 @@ pragma solidity 0.8.20;
 
 import {console2} from "forge-std/Test.sol";
 import {MockToken} from "./mocks/MockToken.sol";
-import {ICurveStableswapFactoryNG} from "../src/interfaces/ICurveStableswapFactoryNG.sol";
-import {CurveStableswapNGUtils} from "./CurveStableswapNGUtils.sol";
-import {ICurveStableSwapNG} from "../src/interfaces/ICurveStableSwapNG.sol";
+import {IStableKittyFactoryNG} from "../src/interfaces/IStableKittyFactoryNG.sol";
+import {StableKittyFactoryNGUtils} from "./StableKittyFactoryNGUtils.sol";
+import {IStableKittySwapNG} from "../src/interfaces/IStableKittySwapNG.sol";
 
-contract CurveStableswapFactoryNGTest is CurveStableswapNGUtils {
+contract StableKittyFactoryNGTest is StableKittyFactoryNGUtils {
 
     address public owner;
     address public feeReceiver;
     uint256 internal forkId;
 
-    ICurveStableswapFactoryNG public factory;
+    IStableKittyFactoryNG public factory;
 
     function setUp() public override {
         console2.log("Setting up...");
@@ -29,7 +29,7 @@ contract CurveStableswapFactoryNGTest is CurveStableswapNGUtils {
         factory = _deployFactory(feeReceiver, owner);
     }
 
-    function _deployPlainPool(string memory _name, string memory _symbol, address[] memory _coins, uint256 _A) internal returns (ICurveStableSwapNG) {
+    function _deployPlainPool(string memory _name, string memory _symbol, address[] memory _coins, uint256 _A) internal returns (IStableKittySwapNG) {
         uint256 _fee = 4000000; // 0.04%
         uint256 _offpeg_fee_multiplier = 20000000000; // 2
         uint256 _ma_exp_time = 866;
@@ -53,10 +53,10 @@ contract CurveStableswapFactoryNGTest is CurveStableswapNGUtils {
             _oracles
         );
         vm.stopPrank();
-        return ICurveStableSwapNG(_newPool);
+        return IStableKittySwapNG(_newPool);
     }
 
-    function x_test_deploy_plain_pool_valid() external {
+    function test_deploy_plain_pool_valid() external {
         assertTrue(factory.math_implementation() != address(0x0), "math_implementation should not be 0x0");
         assertTrue(factory.views_implementation() != address(0x0), "views_implementation should not be 0x0");
         assertTrue(factory.pool_implementations(0) != address(0x0), "pool_implementations should not be 0x0");
@@ -112,7 +112,7 @@ contract CurveStableswapFactoryNGTest is CurveStableswapNGUtils {
         _coins[1] = address(_usdt);
         uint256 _A = 200;
 
-        ICurveStableSwapNG _newPool = _deployPlainPool(_name, _symbol, _coins, _A);
+        IStableKittySwapNG _newPool = _deployPlainPool(_name, _symbol, _coins, _A);
 
         uint256 _daiAmount = 1000e18;
         uint256 _usdtAmount = 1000e18;
