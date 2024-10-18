@@ -90,7 +90,7 @@ interface ICurveStableSwapNG is IERC20 {
 
     function version() external view returns (string memory);
 
-    function total_supply() external view returns (uint256);
+    function totalSupply() external view returns (uint256);
 
     function nonces(address _index) external view returns (uint256);
 

@@ -3,6 +3,7 @@ pragma solidity 0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
 import {ICurveStableswapFactoryNG} from "../src/interfaces/ICurveStableswapFactoryNG.sol";
+import {Consts} from "./Consts.sol";
 
 /*
     forge script ./script/07_CurveStableswapFactoryNGDeployPlainPool.s.sol:CurveStableswapFactoryNGDeployPlainPoolScript --rpc-url <your-rpc-url> -vvv --broadcast
@@ -45,38 +46,34 @@ import {ICurveStableswapFactoryNG} from "../src/interfaces/ICurveStableswapFacto
             ]
         }
 */
-contract CurveStableswapFactoryNGDeployPlainPoolScript is Script {
-    string public constant PARAM_PK_ACCOUNT = "PK_ACCOUNT";
-
+contract CurveStableswapFactoryNGDeployPlainPoolScript is Script, Consts {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
-        ICurveStableswapFactoryNG _factory = ICurveStableswapFactoryNG(address(0x0699C35C0104e478f510531F5Dfc3F9313ae49D1));
+        ICurveStableswapFactoryNG _factory = ICurveStableswapFactoryNG(
+            address(0xDF16Fa72D525c7ec54E525fFE23617a82FB72D68)
+        );
         // uint256 _poolImplId = 0;
-        // address _poolImpl = address(0x3f2EfC4f851759C6B677b53C7520CDEcD749c94a);
+        // address _poolImpl = address(0x0);
         // uint256 _metaPoolImplId = 0;
-        // address _metaPoolImpl = address(0x9fcF233e3CD6256CCAD53ce355e93ce318d613a1);
-        // address _mathImpl = address(0x73B810FeEb9e328f2b9a0440BAa3d154F80a7FFe);
-        // address _viewImpl = address(0xa9D53F87C2629FC4C723BC93Cd29Aa1F002b1B3A);
+        // address _metaPoolImpl = address(0x0);
+        // address _mathImpl = address(0x0);
+        // address _viewImpl = address(0x0);
 
         address uptober = address(0xa540b4Ba1bDe8ADC18728ea367e69D7867c69682);
-        address moonvember = address(0xaB7d17A87442da38D900F7280947Ad68Fe361d66);
+        address moonvember = address(
+            0xaB7d17A87442da38D900F7280947Ad68Fe361d66
+        );
         // address bullcember = address(0x44008c1c6d68EF882FEB807c08a300831B48d635);
 
         address _token0Address = uptober;
         address _token1Address = moonvember;
-        string memory _name = "UP/MOON"; // Example: stETH/ETH
-        string memory _symbol = "UPMOON"; // Example: stETHETH
-        // address[] memory _coins = new address[](2);
-        // _coins[0] = address(_token0Address);
-        // _coins[1] = address(_token1Address);
+        string memory _name = "UP/MOON v2"; // Example: stETH/ETH
+        string memory _symbol = "UPMOONv2"; // Example: stETHETH
         uint256 _A = 200;
         uint256 _fee = 4000000; // 0.04%
         uint256 _offpeg_fee_multiplier = 20000000000; // 2
         uint256 _ma_exp_time = 866;
         uint256 _implementation_idx = 0;
-        // uint8[] memory _asset_types = new uint8[](2); // 0, 0 by default -FIAT-
-        // bytes4[] memory _method_ids = new bytes4[](2); // 0x00000000 by default
-        // address[] memory _oracles = new address[](2); // address(0x0) by default
 
         console.log("Factory:       ", address(_factory));
         console.log("Fee receiver:  ", _factory.fee_receiver());
@@ -116,7 +113,10 @@ contract CurveStableswapFactoryNGDeployPlainPoolScript is Script {
         console.log("New pool:     ", _newPool);
     }
 
-    function _getCoinsList(address _token0, address _token1) internal pure returns (address[] memory) {
+    function _getCoinsList(
+        address _token0,
+        address _token1
+    ) internal pure returns (address[] memory) {
         address[] memory _coins = new address[](2);
         _coins[0] = address(_token0);
         _coins[1] = address(_token1);

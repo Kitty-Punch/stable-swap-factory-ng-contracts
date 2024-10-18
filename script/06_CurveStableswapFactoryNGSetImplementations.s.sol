@@ -3,6 +3,7 @@ pragma solidity 0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
 import {ICurveStableswapFactoryNG} from "../src/interfaces/ICurveStableswapFactoryNG.sol";
+import {Consts} from "./Consts.sol";
 
 /*
     forge script ./script/06_CurveStableswapFactoryNGSetImplementations.s.sol:CurveStableswapFactoryNGSetImplementationsScript --rpc-url <your-rpc-url> -vvv --broadcast
@@ -10,18 +11,16 @@ import {ICurveStableswapFactoryNG} from "../src/interfaces/ICurveStableswapFacto
     --broadcast to send the tx to the network
     -vvv to see the logs
 */
-contract CurveStableswapFactoryNGSetImplementationsScript is Script {
-    string public constant PARAM_PK_ACCOUNT = "PK_ACCOUNT";
-
+contract CurveStableswapFactoryNGSetImplementationsScript is Script, Consts {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
-        ICurveStableswapFactoryNG _factory = ICurveStableswapFactoryNG(address(0x0699C35C0104e478f510531F5Dfc3F9313ae49D1));
+        ICurveStableswapFactoryNG _factory = ICurveStableswapFactoryNG(address(0xDF16Fa72D525c7ec54E525fFE23617a82FB72D68));
         uint256 _poolImplId = 0;
-        address _poolImpl = address(0x3f2EfC4f851759C6B677b53C7520CDEcD749c94a);
+        address _poolImpl = address(0x07f7767deDa26C3FeB1dCFEFD939cfF920Ac5EcE);
         uint256 _metaPoolImplId = 0;
-        address _metaPoolImpl = address(0x9fcF233e3CD6256CCAD53ce355e93ce318d613a1);
-        address _mathImpl = address(0x73B810FeEb9e328f2b9a0440BAa3d154F80a7FFe);
-        address _viewImpl = address(0xa9D53F87C2629FC4C723BC93Cd29Aa1F002b1B3A); 
+        address _metaPoolImpl = address(0x9B3B947B93901Ff750327528C3Bd3eCd79CCd503);
+        address _mathImpl = address(0xFc4e3d3D57487cab3FB610fB188b6c4514d78008);
+        address _viewImpl = address(0xfa7074E024cA8227407cfB07Dd14DF0C3d75b5c6);
 
         console.log("Factory:       ", address(_factory));
         console.log("Fee receiver:  ", _factory.fee_receiver());

@@ -707,7 +707,7 @@ def remove_liquidity_one_coin(
     D: uint256 = empty(uint256)
 
     dy, fee, xp, amp, D = self._calc_withdraw_one_coin(_burn_amount, i)
-    assert dy >= _min_received
+    assert dy >= _min_received, "Not enough coins removed"
 
     self.admin_balances[i] += unsafe_div(fee * admin_fee, FEE_DENOMINATOR)
 
@@ -785,8 +785,8 @@ def remove_liquidity_imbalance(
 
     total_supply: uint256 = self.total_supply
     burn_amount: uint256 = unsafe_div((D0 - D1) * total_supply, D0) + 1
-    assert burn_amount > 1 # dev: zero tokens burned
-    assert burn_amount <= _max_burn_amount
+    assert burn_amount > 1  # dev: zero tokens burned
+    assert burn_amount <= _max_burn_amount, "Slippage screwed you"
 
     self._burnFrom(msg.sender, burn_amount)
 
@@ -818,8 +818,8 @@ def remove_liquidity(
     @return List of amounts of coins that were withdrawn
     """
     total_supply: uint256 = self.total_supply
-    assert _burn_amount > 0 # dev: invalid burn amount
-    assert len(_min_amounts) == N_COINS # dev: invalid array length for _min_amounts
+    assert _burn_amount > 0  # dev: invalid burn amount
+    assert len(_min_amounts) == N_COINS  # dev: invalid array length for _min_amounts
 
     amounts: DynArray[uint256, MAX_COINS] = empty(DynArray[uint256, MAX_COINS])
     balances: DynArray[uint256, MAX_COINS] = self._balances()
@@ -828,7 +828,7 @@ def remove_liquidity(
     for i in range(N_COINS_128, bound=MAX_COINS_128):
 
         value = unsafe_div(balances[i] * _burn_amount, total_supply)
-        assert value >= _min_amounts[i]
+        assert value >= _min_amounts[i], "Withdrawal resulted in fewer coins than expected"
         amounts.append(value)
         self._transfer_out(i, value, _receiver)
 
@@ -949,8 +949,8 @@ def _exchange(
     expect_optimistic_transfer: bool
 ) -> uint256:
 
-    assert i != j # dev: coin index out of range
-    assert _dx > 0 # dev: do not exchange 0 coins
+    assert i != j  # dev: coin index out of range
+    assert _dx > 0  # dev: do not exchange 0 coins
 
     rates: DynArray[uint256, MAX_COINS] = self._stored_rates()
     old_balances: DynArray[uint256, MAX_COINS] = self._balances()
@@ -970,7 +970,7 @@ def _exchange(
 
     x: uint256 = xp[i] + unsafe_div(dx * rates[i], PRECISION)
     dy: uint256 = self.__exchange(x, xp, rates, i, j)
-    assert dy >= _min_dy
+    assert dy >= _min_dy, "Exchange resulted in fewer coins than expected"
 
     # --------------------------- Do Transfer out ----------------------------
 
@@ -1024,13 +1024,13 @@ def get_y(
     """
     # x in the input is converted to the same price/precision
 
-    assert i != j # dev: same coin
-    assert j >= 0 # dev: j below zero
-    assert j < N_COINS_128 # dev: j above N_COINS
+    assert i != j       # dev: same coin
+    assert j >= 0       # dev: j below zero
+    assert j < N_COINS_128  # dev: j above N_COINS
 
     # should be unreachable, but good for safety
-    assert i >= 0 # dev: i below zero
-    assert i < N_COINS_128 # dev: i above N_COINS
+    assert i >= 0
+    assert i < N_COINS_128
 
     amp: uint256 = _amp
     D: uint256 = _D
@@ -1143,8 +1143,8 @@ def get_y_D(
     """
     # x in the input is converted to the same price/precision
 
-    assert i >= 0 # dev: i below zero
-    assert i < N_COINS_128 # dev: i above N_COINS
+    assert i >= 0  # dev: i below zero
+    assert i < N_COINS_128  # dev: i above N_COINS
 
     S_: uint256 = 0
     _x: uint256 = 0
@@ -1487,7 +1487,7 @@ def exp(x: int256) -> uint256:
 
     # When the result is "> (2 ** 255 - 1) / 1e18" we cannot represent it as a signed integer.
     # This happens when "x >= floor(log((2 ** 255 - 1) / 1e18) * 1e18) ~ 135".
-    assert x < 135305999368893231589
+    assert x < 135305999368893231589, "wad_exp overflow"
 
     # `x` is now in the range "(-42, 136) * 1e18". Convert to "(-42, 136) * 2 ** 96" for higher
     # intermediate precision and a binary base. This base conversion is a multiplication with
@@ -1822,9 +1822,9 @@ def dynamic_fee(i: int128, j: int128) -> uint256:
 
 @external
 def ramp_A(_future_A: uint256, _future_time: uint256):
-    assert msg.sender == factory.admin() # dev: only owner
-    assert block.timestamp >= self.initial_A_time + MIN_RAMP_TIME # dev: insufficient time
-    assert _future_time >= block.timestamp + MIN_RAMP_TIME # dev: insufficient time
+    assert msg.sender == factory.admin()  # dev: only owner
+    assert block.timestamp >= self.initial_A_time + MIN_RAMP_TIME
+    assert _future_time >= block.timestamp + MIN_RAMP_TIME  # dev: insufficient time
 
     _initial_A: uint256 = self._A()
     _future_A_p: uint256 = _future_A * A_PRECISION
@@ -1845,7 +1845,7 @@ def ramp_A(_future_A: uint256, _future_time: uint256):
 
 @external
 def stop_ramp_A():
-    assert msg.sender == factory.admin() # dev: only owner
+    assert msg.sender == factory.admin()  # dev: only owner
 
     current_A: uint256 = self._A()
     self.initial_A = current_A
@@ -1860,14 +1860,14 @@ def stop_ramp_A():
 @external
 def set_new_fee(_new_fee: uint256, _new_offpeg_fee_multiplier: uint256):
 
-    assert msg.sender == factory.admin() # dev: only owner
+    assert msg.sender == factory.admin()
 
     # set new fee:
-    assert _new_fee <= MAX_FEE # dev: new fee exceeds maximum
+    assert _new_fee <= MAX_FEE
     self.fee = _new_fee
 
     # set new offpeg_fee_multiplier:
-    assert _new_offpeg_fee_multiplier * _new_fee <= MAX_FEE * FEE_DENOMINATOR # dev: offpeg multiplier exceeds maximum
+    assert _new_offpeg_fee_multiplier * _new_fee <= MAX_FEE * FEE_DENOMINATOR  # dev: offpeg multiplier exceeds maximum
     self.offpeg_fee_multiplier = _new_offpeg_fee_multiplier
 
     log ApplyNewFee(_new_fee, _new_offpeg_fee_multiplier)
@@ -1880,8 +1880,8 @@ def set_ma_exp_time(_ma_exp_time: uint256, _D_ma_time: uint256):
     @param _ma_exp_time Moving average window for the price oracle. It is time_in_seconds / ln(2).
     @param _D_ma_time Moving average window for the D oracle. It is time_in_seconds / ln(2).
     """
-    assert msg.sender == factory.admin() # dev: only owner
-    assert unsafe_mul(_ma_exp_time, _D_ma_time) > 0 # dev: 0 in input values
+    assert msg.sender == factory.admin()  # dev: only owner
+    assert unsafe_mul(_ma_exp_time, _D_ma_time) > 0  # dev: 0 in input values
 
     self.ma_exp_time = _ma_exp_time
     self.D_ma_time = _D_ma_time
