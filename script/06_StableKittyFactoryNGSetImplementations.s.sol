@@ -14,13 +14,13 @@ import {Consts} from "./Consts.sol";
 contract StableKittyFactoryNGSetImplementationsScript is Script, Consts {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
-        IStableKittyFactoryNG _factory = IStableKittyFactoryNG(address(0xf4849506e929f9041dEec3D8C7d7d47230920e54));
+        IStableKittyFactoryNG _factory = IStableKittyFactoryNG(address(0x0));
         uint256 _poolImplId = 0;
-        address _poolImpl = address(0xaA01f74e2310f6C1A105EbC39f6f143a28c05655);
+        address _poolImpl = address(0x0);
         uint256 _metaPoolImplId = 0;
-        address _metaPoolImpl = address(0x2F8Bc9115FF151150D48aa9eBC9fad2555E04f5f);
-        address _mathImpl = address(0xd8e4f6DEb6d4eDF7665fAc0fD234da339f106Aea);
-        address _viewImpl = address(0x6eA2D53D70b323Bc24F8dD168cb9e28Cc70EBfd2);
+        address _metaPoolImpl = address(0x0);
+        address _mathImpl = address(0x0);
+        address _viewImpl = address(0x0);
 
         console.log("Factory:       ", address(_factory));
         console.log("Fee receiver:  ", _factory.fee_receiver());
