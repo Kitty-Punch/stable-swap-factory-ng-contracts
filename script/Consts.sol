@@ -12,6 +12,7 @@ abstract contract Consts {
     string constant STABLE_KITTY_SWAP_NG = "StableKittySwapNG";
     string constant STABLE_KITTY_SWAP_NG_MATH = "StableKittySwapNGMath";
     string constant STABLE_KITTY_SWAP_NG_VIEWS = "StableKittySwapNGViews";
+    string constant KITTY_ROUTER_NG_POOLS_ONLY = "KittyRouterNgPoolsOnly";
 
     function _getBytecodeBlueprint(
         string memory _contractName,
