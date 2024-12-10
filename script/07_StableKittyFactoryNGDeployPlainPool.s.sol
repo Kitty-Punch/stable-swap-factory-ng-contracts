@@ -50,7 +50,7 @@ contract StableKittyFactoryNGDeployPlainPoolScript is Script, Consts {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
         IStableKittyFactoryNG _factory = IStableKittyFactoryNG(
-            address(0xf4849506e929f9041dEec3D8C7d7d47230920e54)
+            address(0x0)
         );
         // uint256 _poolImplId = 0;
         // address _poolImpl = address(0x0);
