@@ -21,6 +21,7 @@ contract StableKittyFactoryNGSetImplementationsScript is Script, Consts {
         address _metaPoolImpl = address(0x0);
         address _mathImpl = address(0x0);
         address _viewImpl = address(0x0);
+        address _gaugeImpl = address(0x0);
 
         console.log("Factory:       ", address(_factory));
         console.log("Fee receiver:  ", _factory.fee_receiver());
@@ -32,13 +33,14 @@ contract StableKittyFactoryNGSetImplementationsScript is Script, Consts {
         _factory.set_metapool_implementations(_metaPoolImplId, _metaPoolImpl);
         _factory.set_math_implementation(_mathImpl);
         _factory.set_views_implementation(_viewImpl);
-        // DON'T REQUIRE _factory.set_gauge_implementation(address _gauge_implementation);
+        _factory.set_gauge_implementation(_gaugeImpl);
 
         require(_factory.pool_implementations(_poolImplId) == _poolImpl, "Pool implementation not set");
         require(_factory.metapool_implementations(_metaPoolImplId) == _metaPoolImpl, "Metapool implementation not set");
         require(_factory.math_implementation() == _mathImpl, "Math implementation not set");
         require(_factory.views_implementation() == _viewImpl, "Views implementation not set");
         require(_factory.fee_receiver() != address(0), "Fee receiver not set");
+        require(_factory.gauge_implementation() == _gaugeImpl, "Gauge implementation not set");
 
         vm.stopBroadcast();
         console.log("StableKittyFactoryNG instance implementations set properly...");

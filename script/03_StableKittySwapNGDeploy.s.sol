@@ -17,6 +17,7 @@ contract StableKittySwapNGDeployScript is Script, Consts {
 
         bytes memory deployBytecode = _getBytecodeBlueprint(
             contractName,
+            OptimizeStrategy.CODESIZE,
             false
         );
         console.log("Starting script: broadcasting");

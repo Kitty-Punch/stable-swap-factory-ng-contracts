@@ -5,19 +5,19 @@ import {Script, console} from "forge-std/Script.sol";
 import {Consts} from "./Consts.sol";
 
 /*
-    forge script ./script/04_StableKittySwapMetaNGDeploy.s.sol:StableKittySwapMetaNGDeployScript --rpc-url <your-rpc-url> -vvv --broadcast
+    forge script ./script/12_StableKittyLiquidityGaugeV6Deploy.s.sol:StableKittyLiquidityGaugeV6DeployScript --rpc-url <your-rpc-url> -vvv --broadcast
 
     --broadcast to send the tx to the network
     -vvv to see the logs
 */
-contract StableKittySwapMetaNGDeployScript is Script, Consts {
+contract StableKittyLiquidityGaugeV6DeployScript is Script, Consts {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint(PARAM_PK_ACCOUNT);
-        string memory contractName = STABLE_KITTY_SWAP_META_NG;
+        string memory contractName = STABLE_KITTY_LIQUIDITY_GAUGE_V6;
 
         bytes memory deployBytecode = _getBytecodeBlueprint(
             contractName,
-            OptimizeStrategy.CODESIZE,
+            OptimizeStrategy.GAS,
             false
         );
         console.log("Starting script: broadcasting");

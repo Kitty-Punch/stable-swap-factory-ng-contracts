@@ -13,16 +13,24 @@ abstract contract Consts {
     string constant STABLE_KITTY_SWAP_NG_MATH = "StableKittySwapNGMath";
     string constant STABLE_KITTY_SWAP_NG_VIEWS = "StableKittySwapNGViews";
     string constant KITTY_ROUTER_NG_POOLS_ONLY = "KittyRouterNgPoolsOnly";
+    string constant STABLE_KITTY_LIQUIDITY_GAUGE_V6 = "StableKittyLiquidityGaugeV6";
+
+    enum OptimizeStrategy {
+        NONE,
+        GAS,
+        CODESIZE
+    }
 
     function _getBytecodeBlueprint(
         string memory _contractName,
+        OptimizeStrategy _optimizeStrategy,
         bool _printBytecode
     ) internal returns (bytes memory) {
         VyperDeployer deployer = new VyperDeployer();
         console.log("Getting bytecode blueprint for: ", _contractName);
         bytes memory bytecodeBlueprint = deployer.getDeployBytecodeBlueprint(
             _contractName,
-            "codesize"
+            _optimizeStrategy == OptimizeStrategy.CODESIZE ? "codesize" : "gas"
         );
         if (_printBytecode) {
             console.log(
